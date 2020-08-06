@@ -1,4 +1,3 @@
-const projects = require('./project-mock');
 module.exports = function (app, sql) {
     app.get('/projects', function (req, res) {
         sql.projectList(function (err, result) {
