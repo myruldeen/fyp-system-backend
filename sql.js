@@ -11,11 +11,20 @@ const Student = sequelize.define('students', {
     studentID: { type: Sequelize.STRING },
     supervisor: { type: Sequelize.INTEGER },
     name: { type: Sequelize.STRING },
+    email: { type: Sequelize.STRING },
     password: { type: Sequelize.STRING },
     photo: { type: Sequelize.STRING },
     course: { type: Sequelize.INTEGER },
     programmeLevel: { type: Sequelize.INTEGER },
     intake: { type: Sequelize.STRING },
+});
+const Supervisor = sequelize.define('supervisor', {
+    supervisorID: { type: Sequelize.STRING },
+    name: { type: Sequelize.STRING },
+    email: { type: Sequelize.STRING },
+    password: { type: Sequelize.STRING },
+    photo: { type: Sequelize.STRING },
+    faculty: { type: Sequelize.STRING },
 });
 const Project = sequelize.define('projects', {
     title: { type: Sequelize.STRING },
@@ -93,6 +102,57 @@ getProjectBySlug = function (slug, callback) {
         });
 };
 
+// Student SQL
+studentList = function (callback) {
+    Student.findAll()
+        .then(function (project) {
+            callback(null, project);
+        })
+        .catch(function (err) {
+            callback(err);
+        });
+};
+getStudentByStudentID = function (id, callback) {
+    Student.findOne({ where: { studentID: id } })
+        .then(function (student) {
+            callback(null, student);
+        })
+        .catch(function (err) {
+            callback(err);
+        });
+};
+
+uploads = function (data, callback) {
+    const student = data.students.map(function (data) {
+        return {
+            studentID: data.ID,
+            name: data.Name,
+            email: data.Email,
+        };
+    });
+    const sv = data.supervisor.map(function (data) {
+        return {
+            supervisorID: data.ID,
+            name: data.Name,
+            email: data.Email,
+        };
+    });
+    Student.bulkCreate(student)
+        .then(() => {
+            return Supervisor.bulkCreate(sv);
+        })
+        .then(() => {
+            callback(null, 'All data inserted!');
+        })
+        .catch((err) => {
+            callback(err);
+        });
+};
+
 module.exports.init = init;
 module.exports.projectList = projectList;
 module.exports.getProjectBySlug = getProjectBySlug;
+module.exports.uploads = uploads;
+
+module.exports.studentList = studentList;
+module.exports.getStudentByStudentID = getStudentByStudentID;

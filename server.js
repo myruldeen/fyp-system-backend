@@ -15,6 +15,9 @@ app.get('/', function (req, res) {
 });
 
 require('./projects')(app, sql);
+require('./student')(app, sql);
+require('./supervisor')(app, sql);
+require('./upload')(app, sql);
 
 app.listen(8000, function () {
     console.log('server is listening');
